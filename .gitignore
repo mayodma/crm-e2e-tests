@@ -1,0 +1,16 @@
+# Environment variables — contains passwords, never commit this
+.env.test
+.env
+
+# Saved login session — contains live auth tokens
+src/fixtures/.auth/
+
+# Playwright output
+test-results/
+playwright-report/
+
+# Node modules — too large, reinstalled with npm install
+node_modules/
+
+# TypeScript compiled output
+dist/
