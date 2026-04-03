@@ -156,27 +156,27 @@ This file stores all sensitive and environment-specific values. The tests read f
 
 ```env
 # The URL of the CRM web application being tested
-APP_URL=https://brave-glacier-0aaf84f00.4.azurestaticapps.net
+APP_URL=https://your-app-url.com
 
 # Keycloak is the authentication server the CRM uses for login
-KEYCLOAK_URL=https://74-225-206-192.sslip.io
-KEYCLOAK_REALM=crmai-dev
-KEYCLOAK_CLIENT_ID=crmai-frontend
+KEYCLOAK_URL=https://your-keycloak-url.com
+KEYCLOAK_REALM=your-realm-name
+KEYCLOAK_CLIENT_ID=your-client-id
 
 # Test user accounts — these are dedicated accounts created just for testing
-TEST_AGENT_EMAIL=vapeto4208@fengnu.com
-TEST_AGENT_PASSWORD=1qaz2wsx
+TEST_AGENT_EMAIL=agent@example.com
+TEST_AGENT_PASSWORD=your-agent-password
 
-TEST_SUPERVISOR_EMAIL=vihejo4906@elafans.com
-TEST_SUPERVISOR_PASSWORD=1qaz2wsx
+TEST_SUPERVISOR_EMAIL=supervisor@example.com
+TEST_SUPERVISOR_PASSWORD=your-supervisor-password
 
-TEST_ADMIN_EMAIL=boxok34809@lawicon.com
-TEST_ADMIN_PASSWORD=1qaz2wsx
+TEST_ADMIN_EMAIL=admin@example.com
+TEST_ADMIN_PASSWORD=your-admin-password
 
 # The base URLs of the backend APIs being tested
-AUTH_API_URL=https://104.211.66.104.sslip.io/auth
-TICKET_API_URL=https://104.211.66.104.sslip.io/tickets
-MASTER_DATA_API_URL=https://104.211.66.104.sslip.io/master-data
+AUTH_API_URL=https://your-api-url.com/auth
+TICKET_API_URL=https://your-api-url.com/tickets
+MASTER_DATA_API_URL=https://your-api-url.com/master-data
 ```
 
 **Why separate test accounts?** We never use real user accounts in tests because:
