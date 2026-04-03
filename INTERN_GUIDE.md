@@ -24,6 +24,8 @@ Welcome to the CRM automated test project. This guide explains everything from s
 16. [How to Run Tests](#16-how-to-run-tests)
 17. [Understanding Test Results](#17-understanding-test-results)
 18. [Common Errors & How to Fix Them](#18-common-errors--how-to-fix-them)
+19. [How to Push This Project to GitHub](#19-how-to-push-this-project-to-github)
+20. [Fork, Get Latest Code, Create a Pull Request & Get it Merged](#20-fork-get-latest-code-create-a-pull-request--get-it-merged)
 
 ---
 
@@ -882,6 +884,579 @@ The label text doesn't match exactly. Inspect the page in your browser (right-cl
 
 ### "Failed to get token"
 The test user credentials in `.env.test` are wrong or the account doesn't exist in Keycloak.
+
+---
+
+---
+
+## 19. How to Push This Project to GitHub
+
+This section explains how to upload this project to GitHub so the whole team can access it. You only need to do the full setup once. After that, you just commit and push your changes.
+
+---
+
+### What is Git and GitHub?
+
+- **Git** — a tool installed on your computer that tracks changes to your code over time. Think of it like a save history for your project.
+- **GitHub** — a website that stores your git repository online so others can access it, collaborate, and review your work.
+
+---
+
+### Step 1 — Install Git
+
+If you don't have Git installed:
+1. Go to [git-scm.com](https://git-scm.com)
+2. Download and install Git for Windows
+3. Verify it works by running in terminal:
+```bash
+git --version
+```
+You should see something like `git version 2.44.0`.
+
+---
+
+### Step 2 — Configure Git with your name and email
+
+This is a one-time setup. Git uses this to label your commits.
+
+```bash
+git config --global user.name "Your Name"
+git config --global user.email "your-email@example.com"
+```
+
+Use the same email as your GitHub account.
+
+---
+
+### Step 3 — Create a new repository on GitHub
+
+1. Go to [github.com](https://github.com) and sign in
+2. Click the **+** icon in the top right corner
+3. Click **New repository**
+4. Fill in the form:
+   - **Repository name:** `crm-e2e-tests`
+   - **Description:** `Playwright E2E tests for the CRM application` (optional)
+   - **Visibility:** Select **Private** (recommended — the project references test credentials)
+   - **Important:** Do NOT tick "Add a README file", "Add .gitignore", or "Choose a license" — we already have these files
+5. Click **Create repository**
+6. GitHub will show a page with setup instructions — **copy the repository URL** at the top. It looks like:
+   ```
+   https://github.com/your-username/crm-e2e-tests.git
+   ```
+
+---
+
+### Step 4 — Check the .gitignore file
+
+Before committing, make sure the `.gitignore` file exists at the root of the project. This file tells Git which files to **never** upload to GitHub.
+
+The `.gitignore` in this project already excludes:
+
+```
+.env.test                  ← contains passwords — NEVER commit this
+src/fixtures/.auth/        ← contains live login tokens
+test-results/              ← generated test output
+playwright-report/         ← generated HTML reports
+node_modules/              ← too large, reinstalled with npm install
+dist/                      ← compiled TypeScript output
+```
+
+**Why is this important?** If `.env.test` is ever committed to a public repository, your passwords and server URLs are exposed to the entire internet.
+
+---
+
+### Step 5 — Initialise Git and make the first commit
+
+Open a terminal in the project folder and run these commands **one at a time**:
+
+**Initialise a git repository in this folder:**
+```bash
+git init
+```
+This creates a hidden `.git/` folder that tracks all changes.
+
+**Stage all files for commit:**
+```bash
+git add .
+```
+The `.` means "add everything in this folder". Git will skip files listed in `.gitignore`.
+
+**Check what will be committed (optional but recommended):**
+```bash
+git status
+```
+You should see your files listed in green. Make sure `.env.test` is NOT listed.
+
+**Create the first commit:**
+```bash
+git commit -m "Initial commit: CRM E2E test suite with Playwright"
+```
+A commit is a saved snapshot. The `-m` flag sets the commit message — always write a short description of what changed.
+
+**Rename the default branch to `main`:**
+```bash
+git branch -M main
+```
+GitHub uses `main` as the default branch name. This ensures consistency.
+
+---
+
+### Step 6 — Connect to GitHub and push
+
+**Link your local repository to GitHub:**
+```bash
+git remote add origin https://github.com/YOUR-USERNAME/crm-e2e-tests.git
+```
+Replace `YOUR-USERNAME` with your actual GitHub username and use the URL you copied in Step 3.
+
+**Upload your code to GitHub:**
+```bash
+git push -u origin main
+```
+- `push` — sends your commits to GitHub
+- `-u origin main` — sets GitHub as the default destination for future pushes (only needed the first time)
+
+GitHub may ask for your username and password. If you have two-factor authentication enabled, use a **Personal Access Token** instead of your password (GitHub Settings → Developer Settings → Personal Access Tokens).
+
+---
+
+### Step 7 — Verify on GitHub
+
+1. Go to `https://github.com/YOUR-USERNAME/crm-e2e-tests`
+2. You should see all your project files listed
+3. Confirm that `.env.test` is **not** visible in the file list
+
+---
+
+### Day-to-day workflow — Making changes and pushing
+
+After the initial setup, every time you make changes to the tests:
+
+**1. Check what changed:**
+```bash
+git status
+```
+
+**2. Stage the changed files:**
+```bash
+git add .
+```
+Or stage a specific file only:
+```bash
+git add src/tests/ui/tickets/tickets.spec.ts
+```
+
+**3. Commit with a meaningful message:**
+```bash
+git commit -m "Add filter by status test to tickets spec"
+```
+
+**4. Push to GitHub:**
+```bash
+git push
+```
+
+---
+
+### Useful Git commands for day-to-day use
+
+| Command | What it does |
+|---|---|
+| `git status` | Shows which files have changed |
+| `git add .` | Stages all changes |
+| `git add <file>` | Stages one specific file |
+| `git commit -m "message"` | Saves a snapshot with a description |
+| `git push` | Uploads commits to GitHub |
+| `git pull` | Downloads the latest changes from GitHub |
+| `git log --oneline` | Shows a short history of all commits |
+| `git diff` | Shows exactly what lines changed in your files |
+
+---
+
+### What NOT to commit — Quick checklist
+
+Before every commit, check:
+
+- [ ] `.env.test` is NOT staged (`git status` should not show it)
+- [ ] `src/fixtures/.auth/agent.json` is NOT staged
+- [ ] `node_modules/` is NOT staged
+- [ ] `test-results/` is NOT staged
+
+If any of these appear in `git status`, your `.gitignore` may be missing or incorrect.
+
+---
+
+---
+
+## 20. Fork, Get Latest Code, Create a Pull Request & Get it Merged
+
+This section explains the full team workflow — how an intern or new team member gets a copy of the project, makes changes safely, and submits those changes for review before they go into the main codebase.
+
+---
+
+### Key Concepts
+
+| Term | Meaning |
+|---|---|
+| **Repository (repo)** | The project and its full history stored on GitHub |
+| **Fork** | Your own personal copy of someone else's repository on GitHub |
+| **Clone** | Downloading a repository from GitHub to your computer |
+| **Branch** | An isolated copy of the code where you make changes without affecting the main code |
+| **Commit** | A saved snapshot of your changes |
+| **Pull Request (PR)** | A request to merge your changes into the main repository, with a review process |
+| **Merge** | Combining your changes into the main branch after review |
+| **Upstream** | The original repository that your fork was created from |
+
+---
+
+### The Full Workflow — Visual Overview
+
+```
+Original Repo (upstream)
+        │
+        │  Fork
+        ▼
+Your Fork on GitHub
+        │
+        │  Clone
+        ▼
+Your Computer (local)
+        │
+        │  Create branch → make changes → commit → push
+        ▼
+Your Fork on GitHub
+        │
+        │  Open Pull Request
+        ▼
+Original Repo ← Review → Approved → Merged
+```
+
+---
+
+### Step 1 — Fork the Repository
+
+A **fork** creates your own copy of the project under your GitHub account. You make all your changes in your fork, not directly in the original repository. This protects the main codebase.
+
+1. Go to the original repository on GitHub (the team's repository)
+2. Click the **Fork** button in the top right corner
+3. Select your GitHub account as the destination
+4. GitHub creates a copy at `https://github.com/YOUR-USERNAME/crm-e2e-tests`
+
+You now have your own independent copy of the project.
+
+---
+
+### Step 2 — Clone Your Fork to Your Computer
+
+Cloning downloads your fork from GitHub to your local machine.
+
+```bash
+git clone https://github.com/YOUR-USERNAME/crm-e2e-tests.git
+```
+
+This creates a folder called `crm-e2e-tests` on your computer. Navigate into it:
+
+```bash
+cd crm-e2e-tests
+```
+
+---
+
+### Step 3 — Connect to the Original Repository (Upstream)
+
+Your fork only knows about itself. You need to tell Git where the original repository is so you can pull in future updates from the team.
+
+```bash
+git remote add upstream https://github.com/ORIGINAL-OWNER/crm-e2e-tests.git
+```
+
+Replace `ORIGINAL-OWNER` with the GitHub username or organisation that owns the original repo.
+
+**Verify your remotes are set up correctly:**
+```bash
+git remote -v
+```
+
+You should see:
+```
+origin    https://github.com/YOUR-USERNAME/crm-e2e-tests.git (fetch)
+origin    https://github.com/YOUR-USERNAME/crm-e2e-tests.git (push)
+upstream  https://github.com/ORIGINAL-OWNER/crm-e2e-tests.git (fetch)
+upstream  https://github.com/ORIGINAL-OWNER/crm-e2e-tests.git (push)
+```
+
+- **origin** = your fork on GitHub
+- **upstream** = the original team repository
+
+---
+
+### Step 4 — Get the Latest Code Before Starting Work
+
+**Always do this before starting any new piece of work.** This ensures your code is up to date with whatever the team has merged recently.
+
+**Fetch the latest changes from the original repo:**
+```bash
+git fetch upstream
+```
+
+**Switch to your main branch:**
+```bash
+git checkout main
+```
+
+**Merge the latest upstream changes into your local main:**
+```bash
+git merge upstream/main
+```
+
+**Push the updated main to your fork on GitHub:**
+```bash
+git push origin main
+```
+
+Your fork is now in sync with the original repository.
+
+---
+
+### Step 5 — Create a New Branch for Your Work
+
+Never make changes directly on `main`. Always create a new branch for each piece of work (each bug fix, each new test, each feature).
+
+**Why branches?**
+- Your `main` stays clean and always matches the team's main
+- Multiple people can work on different things simultaneously without conflicts
+- If something goes wrong, you can delete the branch and start fresh
+
+**Create and switch to a new branch:**
+```bash
+git checkout -b add-login-tests
+```
+
+The `-b` flag creates the branch and switches to it in one step. Use a short, descriptive name with hyphens. Examples:
+- `add-login-tests`
+- `fix-search-locator`
+- `update-ticket-api-test`
+
+**Verify you are on the new branch:**
+```bash
+git branch
+```
+The currently active branch will have a `*` next to it.
+
+---
+
+### Step 6 — Make Your Changes
+
+Now make your changes — edit test files, add new tests, fix locators, etc.
+
+As you work, save your progress with commits regularly. A good rule is to commit after each logical piece of work is complete.
+
+**Check what you've changed:**
+```bash
+git status
+```
+
+**Stage your changes:**
+```bash
+git add .
+```
+Or stage specific files:
+```bash
+git add src/tests/ui/tickets/tickets.spec.ts
+```
+
+**Commit with a clear message:**
+```bash
+git commit -m "Add test for filtering tickets by resolved status"
+```
+
+**Good commit message rules:**
+- Use present tense: "Add test" not "Added test"
+- Be specific: describe what changed and why
+- Keep it under 72 characters
+- Examples:
+  - ✓ `Fix Password locator to use #password ID`
+  - ✓ `Add API test for 404 on missing ticket`
+  - ✗ `fixed stuff`
+  - ✗ `changes`
+
+You can make multiple commits as you work. Each commit is a checkpoint in your history.
+
+---
+
+### Step 7 — Run the Tests Before Pushing
+
+Always run the tests locally before pushing to make sure you haven't broken anything.
+
+```bash
+npm test
+```
+
+All tests should pass (or skip) with no failures. If something fails, fix it before pushing.
+
+---
+
+### Step 8 — Push Your Branch to Your Fork on GitHub
+
+```bash
+git push origin add-login-tests
+```
+
+Replace `add-login-tests` with your actual branch name. This uploads your branch to your GitHub fork.
+
+---
+
+### Step 9 — Open a Pull Request
+
+A **Pull Request (PR)** is how you ask the team to review and accept your changes into the main repository.
+
+1. Go to your fork on GitHub: `https://github.com/YOUR-USERNAME/crm-e2e-tests`
+2. GitHub will show a yellow banner saying **"Your branch had recent pushes"** with a **"Compare & pull request"** button — click it
+3. If you don't see the banner, go to the **Pull requests** tab and click **New pull request**
+4. Set the branches correctly:
+   - **Base repository:** the original team repo
+   - **Base branch:** `main`
+   - **Head repository:** your fork
+   - **Compare branch:** your branch (e.g. `add-login-tests`)
+5. Fill in the Pull Request form:
+
+**Title:** Short and clear — what does this PR do?
+```
+Add filter by resolved status test to tickets spec
+```
+
+**Description:** Explain what you changed and why. Include:
+- What the change does
+- Why it was needed
+- How to test it manually if needed
+- Any known limitations
+
+Example:
+```
+## What changed
+- Added `filterByStatus('RESOLVED')` test to tickets.spec.ts
+- Updated `filterByStatus` method in TicketsPage.ts to use the
+  filter panel (funnel icon → status dropdown → Filter button)
+
+## Why
+The previous test was using pill buttons that don't exist for
+the agent role. This approach uses the correct filter panel.
+
+## How to test
+Run: npx playwright test src/tests/ui/tickets/tickets.spec.ts --headed
+All 4 tests should pass.
+```
+
+6. Click **Create Pull Request**
+
+---
+
+### Step 10 — The Review Process
+
+After opening a PR, a team member (or your supervisor) will review your changes.
+
+**What reviewers look at:**
+- Is the code correct and working?
+- Are locators reliable?
+- Are test names descriptive?
+- Is anything missing or unnecessary?
+
+**Reviewers can:**
+- **Approve** — changes look good, ready to merge
+- **Request changes** — leave comments asking you to fix or improve something
+- **Comment** — ask questions or suggest alternatives without blocking the merge
+
+**If changes are requested:**
+1. Read the reviewer's comments carefully
+2. Make the fixes on your local machine (same branch)
+3. Commit the fixes:
+   ```bash
+   git add .
+   git commit -m "Address review feedback: improve locator specificity"
+   ```
+4. Push again — the PR updates automatically:
+   ```bash
+   git push origin add-login-tests
+   ```
+5. Reply to the reviewer's comments on GitHub to let them know you've addressed them
+
+---
+
+### Step 11 — Merge the Pull Request
+
+Once the reviewer approves, the PR can be merged.
+
+**If you have permission to merge:**
+1. Go to the PR on GitHub
+2. Click the green **Merge pull request** button
+3. Click **Confirm merge**
+4. Click **Delete branch** — the branch is no longer needed after merging
+
+**If you don't have permission:**
+The reviewer or repository owner will merge it for you after approving.
+
+---
+
+### Step 12 — Clean Up After Merging
+
+After your PR is merged, update your local machine and fork:
+
+**Switch back to main:**
+```bash
+git checkout main
+```
+
+**Pull the latest code (which now includes your merged changes):**
+```bash
+git pull upstream main
+```
+
+**Update your fork on GitHub:**
+```bash
+git push origin main
+```
+
+**Delete the branch locally (it's been merged, no longer needed):**
+```bash
+git branch -d add-login-tests
+```
+
+You are now ready to start the next piece of work from Step 4.
+
+---
+
+### Summary — The Complete Cycle
+
+```
+1. git fetch upstream          ← get latest from team
+2. git checkout main
+3. git merge upstream/main     ← update your main
+4. git checkout -b my-branch   ← create new branch
+5. ... make changes ...
+6. npm test                    ← verify tests pass
+7. git add .
+8. git commit -m "message"
+9. git push origin my-branch   ← push to your fork
+10. Open Pull Request on GitHub
+11. Address review feedback
+12. PR gets approved and merged
+13. git checkout main
+14. git pull upstream main      ← sync after merge
+15. git branch -d my-branch    ← clean up
+```
+
+---
+
+### Common Mistakes to Avoid
+
+| Mistake | Why it's a problem | What to do instead |
+|---|---|---|
+| Committing directly to `main` | Bypasses the review process | Always create a branch first |
+| Committing `.env.test` | Exposes passwords publicly | Check `git status` before every commit |
+| Writing vague commit messages | Makes history impossible to read | Write specific, descriptive messages |
+| Not pulling latest before starting | Your code may conflict with recent changes | Always run `git fetch upstream` first |
+| Opening a PR without running tests | Broken code goes up for review | Always run `npm test` before pushing |
+| One massive PR with many changes | Hard to review, hard to undo | Keep PRs small and focused on one thing |
 
 ---
 
