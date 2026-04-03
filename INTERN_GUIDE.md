@@ -25,7 +25,8 @@ Welcome to the CRM automated test project. This guide explains everything from s
 17. [Understanding Test Results](#17-understanding-test-results)
 18. [Common Errors & How to Fix Them](#18-common-errors--how-to-fix-them)
 19. [How to Push This Project to GitHub](#19-how-to-push-this-project-to-github)
-20. [Fork, Get Latest Code, Create a Pull Request & Get it Merged](#20-fork-get-latest-code-create-a-pull-request--get-it-merged)
+20. [Understanding the Branch Strategy](#20-understanding-the-branch-strategy)
+21. [Fork, Get Latest Code, Create a Pull Request & Get it Merged](#21-fork-get-latest-code-create-a-pull-request--get-it-merged)
 
 ---
 
@@ -1086,9 +1087,116 @@ If any of these appear in `git status`, your `.gitignore` may be missing or inco
 
 ---
 
+## 20. Understanding the Branch Strategy
+
+This project uses two permanent branches — `main` and `develop`. Understanding which one to use and when is important before you start any work.
+
 ---
 
-## 20. Fork, Get Latest Code, Create a Pull Request & Get it Merged
+### The Two Permanent Branches
+
+| Branch | Purpose |
+|---|---|
+| `main` | Stable, production-ready code. Only fully reviewed code lives here. |
+| `develop` | Integration branch. All new work merges here first before going to `main`. |
+
+---
+
+### `main` — Never touch this directly
+
+- This is the **stable, always-working** version of the project
+- Nobody commits directly to this branch — not even the project owner
+- It only receives code through Pull Requests from `develop`
+- Think of it as: **"this is what is currently working perfectly"**
+
+---
+
+### `develop` — Your daily working branch
+
+- This is where **all new work starts**
+- You always create your feature branches from here
+- When your feature is done, you open a PR into `develop` (not `main`)
+- When `develop` has been tested and is stable, a PR is opened into `main`
+- Think of it as: **"this is the latest work in progress"**
+
+---
+
+### Feature Branches — Where your actual work happens
+
+You never work directly on `develop` either. You create a short-lived **feature branch** from `develop`, do your work there, then merge it back.
+
+Feature branches are named with a prefix that describes the type of work:
+
+| Type | Prefix | Example |
+|---|---|---|
+| New test or feature | `feature/` | `feature/add-login-tests` |
+| Bug fix | `fix/` | `fix/search-locator` |
+| Documentation | `docs/` | `docs/update-intern-guide` |
+
+---
+
+### How it all connects
+
+```
+main  ←── PR from develop (when develop is stable)
+             │
+           develop  ←── PR from feature branch (when work is done)
+                           │
+                         feature/your-work  ←── your daily commits
+```
+
+---
+
+### Day-to-day workflow
+
+**Every time you start new work — always start from develop:**
+
+```bash
+git checkout develop
+git pull origin develop
+git checkout -b feature/your-feature-name
+```
+
+**Make your changes, then commit:**
+```bash
+git add .
+git commit -m "Add test for ticket search"
+git push origin feature/your-feature-name
+```
+
+**Open a Pull Request on GitHub:**
+- Base branch: `develop`
+- Compare branch: `feature/your-feature-name`
+
+**After your PR is merged into `develop`, the owner periodically merges `develop` into `main`.**
+
+---
+
+### Simple rule to remember
+
+| Branch | You do what here? |
+|---|---|
+| `main` | Nothing — only receives merged PRs from `develop` |
+| `develop` | Pull latest → create your feature branch from here |
+| `feature/xxx` | All your actual code changes happen here |
+
+---
+
+### Keeping `develop` in sync with `main`
+
+When changes are merged directly into `main` (e.g. a hotfix), `develop` can fall behind. To sync them:
+
+```bash
+git checkout develop
+git merge origin/main
+git push origin develop
+```
+
+Run this whenever you notice `develop` is behind `main`.
+
+---
+
+## 21. Fork, Get Latest Code, Create a Pull Request & Get it Merged
 
 This section explains the full team workflow — how an intern or new team member gets a copy of the project, makes changes safely, and submits those changes for review before they go into the main codebase.
 
